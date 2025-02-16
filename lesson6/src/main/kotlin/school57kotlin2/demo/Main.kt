@@ -48,16 +48,19 @@ fun main() {
     val connection = DriverManager.getConnection(url, props)
     val statement: Statement = connection.createStatement()
 
+    val dropTableSQL = "DROP TABLE IF EXISTS users".trimIndent()
+
+    statement.executeUpdate(dropTableSQL)
+
     val createTableSQL = """
         CREATE TABLE IF NOT EXISTS users
         (
           id SERIAL PRIMARY KEY,
-          username VARCHAR(255) NOT NULL UNIQUE,
-          password VARCHAR(255) NOT NULL,
-          email VARCHAR(255) UNIQUE,
+          username VARCHAR(255),
+          password VARCHAR(255),
+          email VARCHAR(255),
           firstname VARCHAR(255),
-          lastname VARCHAR(255),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          lastname VARCHAR(255)
         )
     """.trimIndent()
 
@@ -71,7 +74,7 @@ fun main() {
     statement.executeUpdate(insertSQL)
 
     val selectSQL = """
-        SELECT * FROM users WHERE username = 'john_doe'
+        SELECT * FROM users WHERE username = 'user_1'
     """.trimIndent()
 
     val resultSet = statement.executeQuery(selectSQL)
@@ -83,9 +86,8 @@ fun main() {
         val email = resultSet.getString("email")
         val firstname = resultSet.getString("firstname")
         val lastname = resultSet.getString("lastname")
-        val createdAt = resultSet.getTimestamp("created_at")
 
-        println("ID: $id, Username: $username, Password: $password, Email: $email, Firstname: $firstname, Lastname: $lastname, Created At: $createdAt")
+        println("ID: $id, Username: $username, Password: $password, Email: $email, Firstname: $firstname, Lastname: $lastname")
     }
 
     resultSet.close()
