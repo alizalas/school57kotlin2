@@ -1,0 +1,146 @@
+# psql
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "root" does not exist
+# psql -U myuser -DB mydatabase
+/usr/lib/postgresql/17/bin/psql: invalid option -- 'D'
+psql: hint: Try "psql --help" for more information.
+# psql --help
+psql is the PostgreSQL interactive terminal.
+
+Usage:
+  psql [OPTION]... [DBNAME [USERNAME]]
+
+General options:
+  -c, --command=COMMAND    run only single command (SQL or internal) and exit
+  -d, --dbname=DBNAME      database name to connect to
+  -f, --file=FILENAME      execute commands from file, then exit
+  -l, --list               list available databases, then exit
+  -v, --set=, --variable=NAME=VALUE
+                           set psql variable NAME to VALUE
+                           (e.g., -v ON_ERROR_STOP=1)
+  -V, --version            output version information, then exit
+  -X, --no-psqlrc          do not read startup file (~/.psqlrc)
+  -1 ("one"), --single-transaction
+                           execute as a single transaction (if non-interactive)
+  -?, --help[=options]     show this help, then exit
+      --help=commands      list backslash commands, then exit
+      --help=variables     list special variables, then exit
+
+Input and output options:
+  -a, --echo-all           echo all input from script
+  -b, --echo-errors        echo failed commands
+  -e, --echo-queries       echo commands sent to server
+  -E, --echo-hidden        display queries that internal commands generate
+  -L, --log-file=FILENAME  send session log to file
+  -n, --no-readline        disable enhanced command line editing (readline)
+  -o, --output=FILENAME    send query results to file (or |pipe)
+  -q, --quiet              run quietly (no messages, only query output)
+  -s, --single-step        single-step mode (confirm each query)
+  -S, --single-line        single-line mode (end of line terminates SQL command)
+
+Output format options:
+  -A, --no-align           unaligned table output mode
+      --csv                CSV (Comma-Separated Values) table output mode
+  -F, --field-separator=STRING
+                           field separator for unaligned output (default: "|")
+  -H, --html               HTML table output mode
+  -P, --pset=VAR[=ARG]     set printing option VAR to ARG (see \pset command)
+  -R, --record-separator=STRING
+                           record separator for unaligned output (default: newline)
+  -t, --tuples-only        print rows only
+  -T, --table-attr=TEXT    set HTML table tag attributes (e.g., width, border)
+  -x, --expanded           turn on expanded table output
+  -z, --field-separator-zero
+                           set field separator for unaligned output to zero byte
+  -0, --record-separator-zero
+                           set record separator for unaligned output to zero byte
+
+Connection options:
+  -h, --host=HOSTNAME      database server host or socket directory
+  -p, --port=PORT          database server port
+  -U, --username=USERNAME  database user name
+  -w, --no-password        never prompt for password
+  -W, --password           force password prompt (should happen automatically)
+
+For more information, type "\?" (for internal commands) or "\help" (for SQL
+commands) from within psql, or consult the psql section in the PostgreSQL
+documentation.
+
+Report bugs to <pgsql-bugs@lists.postgresql.org>.
+PostgreSQL home page: <https://www.postgresql.org/>
+# psql -U myuser -W mypassword
+Password:
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  database "mypassword" does not exist
+# psql -U myuser -W mydatabase
+Password:
+psql (17.2 (Debian 17.2-1.pgdg120+1))
+Type "help" for help.
+
+mydatabase=# /dt
+mydatabase-# ;\
+ERROR:  syntax error at or near "/"
+LINE 1: /dt
+        ^
+invalid command \
+Try \? for help.
+mydatabase=# \dt
+         List of relations
+ Schema |  Name   | Type  | Owner
+--------+---------+-------+--------
+ public | clients | table | myuser
+(1 row)
+
+mydatabase=# select (*) from clients
+mydatabase-# ;
+ERROR:  syntax error at or near "*"
+LINE 1: select (*) from clients
+                ^
+mydatabase=# select count(*) from clients;
+ count
+--------
+ 200000
+(1 row)
+
+mydatabase=# select count(*) from clients where age < 18;
+ count
+--------
+ 100034
+(1 row)
+
+mydatabase=# select count(*) from clients where age >= 18
+mydatabase-# ;
+ count
+-------
+ 99966
+(1 row)
+
+mydatabase=# explain select count(*) from clients where age < 18
+mydatabase-# ;
+                                        QUERY PLAN
+------------------------------------------------------------------------------------------
+ Aggregate  (cost=5066.68..5066.69 rows=1 width=8)
+   ->  Index Only Scan using age_hidx on clients  (cost=0.42..4817.89 rows=99515 width=0)
+         Index Cond: (age < 18)
+(3 rows)
+
+mydatabase=# explain analyze select count(*) from clients where age < 18;
+
+
+
+
+
+
+
+
+
+
+
+                                                                QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=5066.68..5066.69 rows=1 width=8) (actual time=34.984..34.985 rows=1 loops=1)
+   ->  Index Only Scan using age_hidx on clients  (cost=0.42..4817.89 rows=99515 width=0) (actual time=0.074..27.524 rows=100034 loops=1)
+         Index Cond: (age < 18)
+         Heap Fetches: 17270
+ Planning Time: 0.108 ms
+ Execution Time: 35.015 ms
+(6 rows)
+:
