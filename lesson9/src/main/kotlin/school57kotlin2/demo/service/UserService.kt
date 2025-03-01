@@ -1,5 +1,6 @@
 package school57kotlin2.demo.service
 
+import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -20,7 +21,7 @@ class UserService(
     fun getUser(name: String) =
         userRepository.findByName(name) ?: throw UserNotFoundException(name)
 
-     // @Transactional
+    @Transactional
     fun transferMoney(transferDto: TransferDto) {
         val fromUser = getUser(transferDto.from)
         val toUser = getUser(transferDto.to)
