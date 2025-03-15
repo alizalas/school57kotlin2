@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
+    jacoco
 }
 
 repositories {
@@ -26,6 +27,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.mockk:mockk:1.13.16")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
 }
 
 tasks.test {
@@ -33,4 +35,11 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(17)
+}
+tasks {
+    jacocoTestReport{
+        reports{
+            html.required = true
+        }
+    }
 }
