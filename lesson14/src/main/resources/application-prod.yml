@@ -1,3 +1,4 @@
 my:
   config:
     timeout: 5
+    url: "ytn"

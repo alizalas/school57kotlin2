@@ -31,10 +31,7 @@ dependencies {
 }
 
 tasks.test {
-    useJUnitPlatform{
-        // TODO не забыть убрать
-        environment("spring.profiles.active", "test, prod")
-    }
+    useJUnitPlatform{}
 }
 kotlin {
     jvmToolchain(17)

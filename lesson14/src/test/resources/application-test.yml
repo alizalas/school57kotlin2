@@ -1,0 +1,4 @@
+our:
+  config:
+    timeout: 15
+    url: "привет"
